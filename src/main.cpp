@@ -1,10 +1,12 @@
 
 #include <iostream>
-#include "./Node.h"
+#include "./QuadTree.cpp"
 
 int main() {
 
-  std::cout << "yo!";
+  QuadTree<int> *qt = new QuadTree<int>();
+
+  delete qt;
 
   return 0;
 }
