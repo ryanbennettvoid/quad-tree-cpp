@@ -4,9 +4,9 @@
 
 int main() {
 
-  QuadTree<int> *qt = new QuadTree<int>();
-
-  delete qt;
+  Coordinate bbCenter = Coordinate( 0, 0 );
+  BoundaryBox bb = BoundaryBox( bbCenter, 100 );
+  // QuadTree<int> qt( bb );
 
   return 0;
 }

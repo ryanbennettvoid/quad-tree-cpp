@@ -1,54 +1,73 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
-struct Coordinates {
+#include <vector>
 
-  double x;
-  double y;
-
-};
-
-template<typename T>
-struct Node {
-
-  T *data;
-  Coordinates *point;
-
-};
-
-struct BoundaryBox {
-
-  Coordinates *center;
-  double halfSize;
-
-};
-
-template<typename T>
-class QuadTree {
-
-  private:
-
-    static const int NODE_CAPACITY = 4;
+class Coordinate
+{
 
   public:
 
-    BoundaryBox *boundary;
-    Node<T> *nodes[ NODE_CAPACITY ];
+    double x;
+    double y;
 
-    QuadTree *northWest;
-    QuadTree *northEast;
-    QuadTree *southWest;
-    QuadTree *southEast;
-
-    // nw---ne
-    // |     |
-    // |     |
-    // sw---se
-
-    QuadTree();
-    // insert();
-    // subdivide();
+    Coordinate( double _x, double _y );
 
 };
+
+template<typename T>
+class Node
+{
+
+  public:
+
+    Coordinate point;
+    T data;
+
+    Node( Coordinate& _point, T& _data );
+
+};
+
+class BoundaryBox
+{
+
+  public:
+
+    Coordinate center;
+    double halfSize;
+
+    BoundaryBox( Coordinate& _center, double _halfSize );
+
+};
+
+// template<typename T>
+// class QuadTree
+// {
+
+//   private:
+
+//     static const int NODE_CAPACITY = 4;
+
+//   public:
+
+//     BoundaryBox boundaryBox;
+//     std::vector< Node<T> > nodes;
+
+//     QuadTree<T>* northWest;
+//     QuadTree<T>* northEast;
+//     QuadTree<T>* southWest;
+//     QuadTree<T>* southEast;
+
+//     // nw---ne
+//     // |     |
+//     // |     |
+//     // sw---se
+
+//     QuadTree( BoundaryBox& _boundaryBox );
+//     bool insert( Node<T>& _node );
+//     void subdivide(); // divide into 4 children
+//     std::vector< Node<T> > queryRange( BoundaryBox& _boundaryBox );
+
+// };
 
 #endif
