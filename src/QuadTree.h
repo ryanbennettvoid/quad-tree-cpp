@@ -24,7 +24,7 @@ class Node
     Coordinate point;
     T data;
 
-    Node( Coordinate& _point, T& _data );
+    Node( Coordinate& _point, T _data );
 
 };
 
@@ -37,37 +37,39 @@ class BoundaryBox
     double halfSize;
 
     BoundaryBox( Coordinate& _center, double _halfSize );
+    bool containsCoordinate( Coordinate& _point );
+    bool intersectsBoundaryBox( BoundaryBox& _boundaryBox );
 
 };
 
-// template<typename T>
-// class QuadTree
-// {
+template<typename T>
+class QuadTree
+{
 
-//   private:
+  private:
 
-//     static const int NODE_CAPACITY = 4;
+    static const unsigned int NODE_CAPACITY = 4;
 
-//   public:
+  public:
 
-//     BoundaryBox boundaryBox;
-//     std::vector< Node<T> > nodes;
+    BoundaryBox boundaryBox;
+    std::vector< Node<T> > nodes;
 
-//     QuadTree<T>* northWest;
-//     QuadTree<T>* northEast;
-//     QuadTree<T>* southWest;
-//     QuadTree<T>* southEast;
+    QuadTree<T>* northWest;
+    QuadTree<T>* northEast;
+    QuadTree<T>* southWest;
+    QuadTree<T>* southEast;
 
-//     // nw---ne
-//     // |     |
-//     // |     |
-//     // sw---se
+    // nw---ne
+    // |     |
+    // |     |
+    // sw---se
 
-//     QuadTree( BoundaryBox& _boundaryBox );
-//     bool insert( Node<T>& _node );
-//     void subdivide(); // divide into 4 children
-//     std::vector< Node<T> > queryRange( BoundaryBox& _boundaryBox );
+    QuadTree( BoundaryBox& _boundaryBox );
+    bool insert( Node<T>& _node );
+    void subdivide(); // divide into 4 children
+    std::vector< Node<T> > queryRange( BoundaryBox& _boundaryBox );
 
-// };
+};
 
 #endif
