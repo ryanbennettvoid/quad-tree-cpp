@@ -91,6 +91,9 @@ bool QuadTree<T>::insert( Node<T> &_node )
     return true;
   }
 
+  // create child quads
+  if ( this->northWest == NULL ) this->subdivide();
+
   // otherwise subdivide and add to first available node
   if ( this->northWest->insert( _node ) ) return true;
   if ( this->northEast->insert( _node ) ) return true;
@@ -103,6 +106,24 @@ bool QuadTree<T>::insert( Node<T> &_node )
 template<typename T>
 void QuadTree<T>::subdivide()
 {
+
+  double newHalfSize = this->boundaryBox.halfSize / 2;
+
+  Coordinate nwCenter = Coordinate( this->boundaryBox.center.x - newHalfSize, this->boundaryBox.center.y + newHalfSize );
+  Coordinate neCenter = Coordinate( this->boundaryBox.center.x + newHalfSize, this->boundaryBox.center.y + newHalfSize );
+  Coordinate swCenter = Coordinate( this->boundaryBox.center.x - newHalfSize, this->boundaryBox.center.y - newHalfSize );
+  Coordinate seCenter = Coordinate( this->boundaryBox.center.x + newHalfSize, this->boundaryBox.center.y - newHalfSize );
+
+  BoundaryBox bbNw = BoundaryBox( nwCenter, newHalfSize );
+  BoundaryBox bbNe = BoundaryBox( neCenter, newHalfSize );
+  BoundaryBox bbSw = BoundaryBox( swCenter, newHalfSize );
+  BoundaryBox bbSe = BoundaryBox( seCenter, newHalfSize );
+
+  this->northWest = new QuadTree<T>( bbNw );
+  this->northEast = new QuadTree<T>( bbNe );
+  this->southWest = new QuadTree<T>( bbSw );
+  this->southEast = new QuadTree<T>( bbSe );
+
 }
 
 template<typename T>
