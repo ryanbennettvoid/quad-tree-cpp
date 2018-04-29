@@ -8,7 +8,7 @@ int main() {
 
   Coordinate bbCenter = Coordinate( 0, 0 );
   BoundaryBox bb = BoundaryBox( bbCenter, MAX_BOUND );
-  QuadTree<int> qt = QuadTree<int>( bb );
+  QuadTree<int>* qt = new QuadTree<int>( bb );
 
   for ( int i = 0; i < 10; i++ ) {
 
@@ -19,7 +19,7 @@ int main() {
 
     Node<int> n = Node<int>( c, 777 );
 
-    qt.insert( n );
+    qt->insert( n );
 
     std::cout << randX << "," << randY << std::endl;
 
