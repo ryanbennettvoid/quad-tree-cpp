@@ -66,6 +66,7 @@ class QuadTree
     // sw---se
 
     QuadTree( BoundaryBox& _boundaryBox );
+    ~QuadTree();
     bool insert( Node<T>& _node );
     void subdivide(); // divide into 4 children
     std::vector< Node<T> > queryRange( BoundaryBox& _boundaryBox );

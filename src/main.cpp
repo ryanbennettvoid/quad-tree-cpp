@@ -10,7 +10,7 @@ int main() {
   BoundaryBox bb = BoundaryBox( bbCenter, MAX_BOUND );
   QuadTree<int>* qt = new QuadTree<int>( bb );
 
-  for ( int i = 0; i < 10; i++ ) {
+  for ( int i = 0; i < 50; i++ ) {
 
     double randX = ( double )( rand() % MAX_BOUND ) * 0.9;
     double randY = ( double )( rand() % MAX_BOUND ) * 0.9;
@@ -24,6 +24,8 @@ int main() {
     std::cout << randX << "," << randY << std::endl;
 
   }
+
+  delete qt;
 
   return 0;
 }

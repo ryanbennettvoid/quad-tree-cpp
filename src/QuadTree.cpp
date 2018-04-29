@@ -104,6 +104,18 @@ bool QuadTree<T>::insert( Node<T> &_node )
 }
 
 template<typename T>
+QuadTree<T>::~QuadTree() {
+
+  delete this->northWest;
+  delete this->northEast;
+  delete this->southWest;
+  delete this->southEast;
+  
+  std::cout << "del\n";
+
+}
+
+template<typename T>
 void QuadTree<T>::subdivide()
 {
 
