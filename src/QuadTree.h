@@ -21,10 +21,10 @@ class Node
 
   public:
 
-    Coordinate point;
-    T data;
+    Coordinate* point;
+    T* data;
 
-    Node( Coordinate& _point, T _data );
+    Node( Coordinate* _point, T* _data );
 
 };
 
@@ -33,12 +33,12 @@ class BoundaryBox
 
   public:
 
-    Coordinate center;
+    Coordinate* center;
     double halfSize;
 
-    BoundaryBox( Coordinate& _center, double _halfSize );
-    bool containsCoordinate( Coordinate& _point );
-    bool intersectsBoundaryBox( BoundaryBox& _boundaryBox );
+    BoundaryBox( Coordinate* _center, double _halfSize );
+    bool containsCoordinate( Coordinate* _point );
+    bool intersectsBoundaryBox( BoundaryBox* _boundaryBox );
 
 };
 
@@ -52,8 +52,8 @@ class QuadTree
 
   public:
 
-    BoundaryBox boundaryBox;
-    std::vector< Node<T> > nodes;
+    BoundaryBox* boundaryBox;
+    std::vector< Node<T>* >* nodes;
 
     QuadTree<T>* northWest;
     QuadTree<T>* northEast;
@@ -65,11 +65,11 @@ class QuadTree
     // |     |
     // sw---se
 
-    QuadTree( BoundaryBox& _boundaryBox );
+    QuadTree( BoundaryBox* _boundaryBox );
     ~QuadTree();
-    bool insert( Node<T>& _node );
+    bool insert( Node<T>* _node );
     void subdivide(); // divide into 4 children
-    std::vector< Node<T> > queryRange( BoundaryBox& _boundaryBox );
+    std::vector< Node<T>* >* queryRange( BoundaryBox* _boundaryBox );
 
 };
 
