@@ -31,7 +31,7 @@ class QuadTree : Printable
     // sw---se
 
     QuadTree( BoundaryBox boundaryBox );
-    // ~QuadTree();
+    ~QuadTree();
     bool insert( Node node );
     void subdivide(); // divide into 4 children
     std::vector<Node> queryRange( BoundaryBox boundaryBox );

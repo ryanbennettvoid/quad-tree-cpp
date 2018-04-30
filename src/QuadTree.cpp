@@ -1,8 +1,6 @@
 
-// #include <iostream>
 #include <string>
 #include <vector>
-#include "assert.h"
 
 #include "./QuadTree.h"
 #include "./BoundaryBox.h"
@@ -11,30 +9,27 @@
 QuadTree::QuadTree( BoundaryBox boundaryBox )
 : mBoundaryBox(boundaryBox), mNorthWest(NULL), mNorthEast(NULL), mSouthWest(NULL), mSouthEast(NULL)
 {
-  // std::cout << "QuadTree created: " << this->mBoundaryBox.toString() << std::endl;
 }
 
-// QuadTree::~QuadTree()
-// {
-//    if ( this->mNorthWest != NULL ) delete this->mNorthWest;
-//    if ( this->mNorthEast != NULL ) delete this->mNorthEast;
-//    if ( this->mSouthWest != NULL ) delete this->mSouthWest;
-//    if ( this->mSouthEast != NULL ) delete this->mSouthEast;
-// }
+QuadTree::~QuadTree()
+{
+   if ( this->mNorthWest != NULL ) delete this->mNorthWest;
+   if ( this->mNorthEast != NULL ) delete this->mNorthEast;
+   if ( this->mSouthWest != NULL ) delete this->mSouthWest;
+   if ( this->mSouthEast != NULL ) delete this->mSouthEast;
+}
 
 bool QuadTree::insert( Node node )
 {
 
   // ensure correct bounds
   if ( !this->mBoundaryBox.containsCoordinate( node.mOrigin ) ) {
-    // std::cout << "not contained: " << node.toString() << std::endl;
     return false;
   }
 
   // if space available here, add it
   if ( this->mNodes.size() < this->NODE_CAPACITY ) {
     this->mNodes.push_back( node );
-    // std::cout << "added node: " << node.toString() << std::endl;
     return true;
   }
 
@@ -53,8 +48,6 @@ bool QuadTree::insert( Node node )
 void QuadTree::subdivide()
 {
 
-  // std::cout << "subd start" << std::endl;
-
   double newHalfSize = this->mBoundaryBox.mHalfSize / 2;
 
   Coordinate nwCenter = Coordinate( this->mBoundaryBox.mOrigin.mX - newHalfSize, this->mBoundaryBox.mOrigin.mY + newHalfSize );
@@ -71,8 +64,6 @@ void QuadTree::subdivide()
   this->mNorthEast = new QuadTree( bbNe );
   this->mSouthWest = new QuadTree( bbSw );
   this->mSouthEast = new QuadTree( bbSe );
-
-  // std::cout << "subd end" << std::endl;
 
 }
 

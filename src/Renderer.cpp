@@ -31,11 +31,13 @@ void Renderer::drawCoordinate( Coordinate& coordinate )
 void Renderer::drawBoundaryBox( BoundaryBox& boundaryBox )
 {
   if ( this->_mDrawer == NULL ) return;
+  int xOffset = this->_mBitmapImage.width() / 2;
+  int yOffset = this->_mBitmapImage.height() / 2;
   int x1 = boundaryBox.getLeft();
   int y1 = boundaryBox.getTop();
   int x2 = boundaryBox.getRight();
   int y2 = boundaryBox.getBottom();
-  this->_mDrawer->rectangle( x1, y1, x2, y2 );
+  this->_mDrawer->rectangle( x1 + xOffset, y1 + yOffset, x2 + xOffset, y2 + yOffset );
 }
 
 void Renderer::save()

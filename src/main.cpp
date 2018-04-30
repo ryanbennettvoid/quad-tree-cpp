@@ -26,19 +26,21 @@ void drawBoundaryBoxes( Renderer& renderer, QuadTree* qt ) {
 int main() {
 
   Coordinate worldCenter = Coordinate( 0, 0 );
-  std::cout << "created worldCenter: " << worldCenter.toString() << std::endl;
+  // std::cout << "created worldCenter: " << worldCenter.toString() << std::endl;
 
   BoundaryBox worldBounds = BoundaryBox( worldCenter, HALF_WORLD_SIZE );
-  std::cout << "created worldBounds: " << worldBounds.toString() << std::endl;
+  // std::cout << "created worldBounds: " << worldBounds.toString() << std::endl;
   
   QuadTree* qt = new QuadTree( worldBounds );
-  std::cout << "create qt: " << qt->toString() << std::endl;
+  // std::cout << "create qt: " << qt->toString() << std::endl;
 
   int rangeNum = HALF_WORLD_SIZE * 0.9999;
 
-  Renderer renderer = Renderer( "out.bmp", HALF_WORLD_SIZE*2, HALF_WORLD_SIZE*2 );
+  std::string filename = "out.bmp";
 
-  for ( int i = 0; i < 200; i++ ) {
+  Renderer renderer = Renderer( filename, HALF_WORLD_SIZE*2, HALF_WORLD_SIZE*2 );
+
+  for ( int i = 0; i < 300; i++ ) {
 
     double randX = Helpers::generateRandomNumberInRange( -rangeNum, rangeNum );
     double randY = Helpers::generateRandomNumberInRange( -rangeNum, rangeNum );
@@ -46,7 +48,7 @@ int main() {
     Coordinate nodeOrigin = Coordinate( randX, randY );
     Data nodeData = Data();
     Node node = Node( nodeOrigin, nodeData );
-    std::cout << "created node: " << i+1 << ", " << node.toString() << std::endl;
+    // std::cout << "created node: " << i+1 << ", " << node.toString() << std::endl;
 
     qt->insert( node );
     renderer.drawCoordinate( nodeOrigin );
@@ -55,15 +57,17 @@ int main() {
 
   std::vector<Node> queryItems = qt->queryRange( worldBounds );
 
-  std::cout << "num items in query: " << queryItems.size() << std::endl;
+  std::cout << "world query: " << queryItems.size() << std::endl;
 
-  for ( unsigned int i = 0; i < queryItems.size(); i++ ) {
-    std::cout << "query item: " << queryItems[ i ].toString() << std::endl;
-  }
+  // for ( unsigned int i = 0; i < queryItems.size(); i++ ) {
+  //   std::cout << "query item: " << queryItems[ i ].toString() << std::endl;
+  // }
 
   drawBoundaryBoxes( renderer, qt );
 
   renderer.save();
+
+  std::cout << "rendered to " << filename << std::endl;
 
   delete qt;
 
