@@ -12,4 +12,5 @@ add_executable(
   src/Node.cpp
   src/Data.cpp
   src/QuadTree.cpp
+  src/Renderer.cpp
 )

@@ -8,8 +8,20 @@
 #include "./Data.h"
 #include "./QuadTree.h"
 #include "./Helpers.h"
+#include "./Renderer.h"
 
-const int HALF_WORLD_SIZE = 1000;
+const int HALF_WORLD_SIZE = 500;
+
+void drawBoundaryBoxes( Renderer& renderer, QuadTree* qt ) {
+
+  renderer.drawBoundaryBox( qt->mBoundaryBox );
+
+  if ( qt->mNorthWest != NULL ) drawBoundaryBoxes( renderer, qt->mNorthWest );
+  if ( qt->mNorthEast != NULL ) drawBoundaryBoxes( renderer, qt->mNorthEast );
+  if ( qt->mSouthWest != NULL ) drawBoundaryBoxes( renderer, qt->mSouthWest );
+  if ( qt->mSouthEast != NULL ) drawBoundaryBoxes( renderer, qt->mSouthEast );
+
+}
 
 int main() {
 
@@ -19,12 +31,14 @@ int main() {
   BoundaryBox worldBounds = BoundaryBox( worldCenter, HALF_WORLD_SIZE );
   std::cout << "created worldBounds: " << worldBounds.toString() << std::endl;
   
-  QuadTree qt = QuadTree( worldBounds );
-  std::cout << "create qt: " << qt.toString() << std::endl;
+  QuadTree* qt = new QuadTree( worldBounds );
+  std::cout << "create qt: " << qt->toString() << std::endl;
 
   int rangeNum = HALF_WORLD_SIZE * 0.9999;
 
-  for ( int i = 0; i < 50; i++ ) {
+  Renderer renderer = Renderer( "out.bmp", HALF_WORLD_SIZE*2, HALF_WORLD_SIZE*2 );
+
+  for ( int i = 0; i < 200; i++ ) {
 
     double randX = Helpers::generateRandomNumberInRange( -rangeNum, rangeNum );
     double randY = Helpers::generateRandomNumberInRange( -rangeNum, rangeNum );
@@ -34,17 +48,24 @@ int main() {
     Node node = Node( nodeOrigin, nodeData );
     std::cout << "created node: " << i+1 << ", " << node.toString() << std::endl;
 
-    qt.insert( node );
+    qt->insert( node );
+    renderer.drawCoordinate( nodeOrigin );
 
   }
 
-  std::vector<Node> queryItems = qt.queryRange( worldBounds );
+  std::vector<Node> queryItems = qt->queryRange( worldBounds );
 
   std::cout << "num items in query: " << queryItems.size() << std::endl;
 
   for ( unsigned int i = 0; i < queryItems.size(); i++ ) {
     std::cout << "query item: " << queryItems[ i ].toString() << std::endl;
   }
+
+  drawBoundaryBoxes( renderer, qt );
+
+  renderer.save();
+
+  delete qt;
 
   return 0;
 

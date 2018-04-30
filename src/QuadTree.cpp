@@ -1,5 +1,5 @@
 
-#include <iostream>
+// #include <iostream>
 #include <string>
 #include <vector>
 #include "assert.h"
@@ -11,7 +11,7 @@
 QuadTree::QuadTree( BoundaryBox boundaryBox )
 : mBoundaryBox(boundaryBox), mNorthWest(NULL), mNorthEast(NULL), mSouthWest(NULL), mSouthEast(NULL)
 {
-  std::cout << "QuadTree created: " << this->mBoundaryBox.toString() << std::endl;
+  // std::cout << "QuadTree created: " << this->mBoundaryBox.toString() << std::endl;
 }
 
 // QuadTree::~QuadTree()
@@ -53,7 +53,7 @@ bool QuadTree::insert( Node node )
 void QuadTree::subdivide()
 {
 
-  std::cout << "subd start" << std::endl;
+  // std::cout << "subd start" << std::endl;
 
   double newHalfSize = this->mBoundaryBox.mHalfSize / 2;
 
@@ -72,7 +72,7 @@ void QuadTree::subdivide()
   this->mSouthWest = new QuadTree( bbSw );
   this->mSouthEast = new QuadTree( bbSe );
 
-  std::cout << "subd end" << std::endl;
+  // std::cout << "subd end" << std::endl;
 
 }
 
