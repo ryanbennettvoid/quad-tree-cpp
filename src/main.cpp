@@ -10,7 +10,7 @@
 #include "./Helpers.h"
 #include "./Renderer.h"
 
-const int HALF_WORLD_SIZE = 500;
+const int HALF_WORLD_SIZE = 300;
 
 void drawBoundaryBoxes( Renderer& renderer, QuadTree* qt ) {
 
@@ -34,13 +34,13 @@ int main() {
   QuadTree* qt = new QuadTree( worldBounds );
   // std::cout << "create qt: " << qt->toString() << std::endl;
 
-  int rangeNum = HALF_WORLD_SIZE * 0.9999;
+  int rangeNum = HALF_WORLD_SIZE * 0.65;
 
   std::string filename = "out.bmp";
 
   Renderer renderer = Renderer( filename, HALF_WORLD_SIZE*2, HALF_WORLD_SIZE*2 );
 
-  for ( int i = 0; i < 300; i++ ) {
+  for ( int i = 0; i < 500; i++ ) {
 
     double randX = Helpers::generateRandomNumberInRange( -rangeNum, rangeNum );
     double randY = Helpers::generateRandomNumberInRange( -rangeNum, rangeNum );
