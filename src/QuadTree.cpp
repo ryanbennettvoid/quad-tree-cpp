@@ -1,176 +1,111 @@
 
-#include <assert.h>
 #include <iostream>
+#include <string>
+#include <vector>
+#include "assert.h"
+
 #include "./QuadTree.h"
+#include "./BoundaryBox.h"
+#include "./Node.h"
 
-// Coordinate
-
-Coordinate::Coordinate( double _x, double _y )
-: x(_x), y(_y)
+QuadTree::QuadTree( BoundaryBox boundaryBox )
+: mBoundaryBox(boundaryBox), mNorthWest(NULL), mNorthEast(NULL), mSouthWest(NULL), mSouthEast(NULL)
 {
+  // this->mNodes = std::vector<Node>();
 }
 
-// Node
+// QuadTree::~QuadTree()
+// {
+//    if ( this->mNorthWest != NULL ) delete this->mNorthWest;
+//    if ( this->mNorthEast != NULL ) delete this->mNorthEast;
+//    if ( this->mSouthWest != NULL ) delete this->mSouthWest;
+//    if ( this->mSouthEast != NULL ) delete this->mSouthEast;
+// }
 
-template<typename T>
-Node<T>::Node( Coordinate* _point, T* _data )
-: point(_point), data(_data)
-{
-}
-
-// // BoundaryBox
-
-BoundaryBox::BoundaryBox( Coordinate* _center, double _halfSize )
-: center(_center), halfSize(_halfSize)
-{
-}
-
-bool BoundaryBox::containsCoordinate( Coordinate* _coordinate )
-{
-
-  double left = this->center->x - this->halfSize;
-  double right = this->center->x + this->halfSize;
-  double top = this->center->y + this->halfSize;
-  double bottom = this->center->y - this->halfSize;
-
-  double x = _coordinate->x;
-  double y = _coordinate->y;
-
-  if (
-    left < x && x < right &&
-    bottom < y && y < top
-  ) {
-    return true;
-  }
-
-  return false;
-}
-
-// https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
-bool BoundaryBox::intersectsBoundaryBox( BoundaryBox* _boundaryBox )
-{
-
-  double leftA = this->center->x - this->halfSize;
-  double rightA = this->center->x + this->halfSize;
-  double topA = this->center->y + this->halfSize;
-  double bottomA = this->center->y - this->halfSize;
-
-  double leftB = _boundaryBox->center->x - _boundaryBox->halfSize;
-  double rightB = _boundaryBox->center->x + _boundaryBox->halfSize;
-  double topB = _boundaryBox->center->y + _boundaryBox->halfSize;
-  double bottomB = _boundaryBox->center->y - _boundaryBox->halfSize;
-
-  return !(
-    leftA > rightB ||
-    rightA < leftB ||
-    topA < bottomB ||
-    bottomA > topB
-  );
-}
-
-// Quad Tree
-
-template<typename T>
-QuadTree<T>::QuadTree( BoundaryBox* _boundaryBox )
-: boundaryBox(_boundaryBox), northWest(NULL), northEast(NULL), southWest(NULL), southEast(NULL)
-{
-  this->nodes = new std::vector< Node<T>* >();
-}
-
-template<typename T>
-bool QuadTree<T>::insert( Node<T>* _node )
+bool QuadTree::insert( Node node )
 {
 
   // ensure correct bounds
-  if ( !this->boundaryBox->containsCoordinate( _node->point ) ) {
+  if ( !this->mBoundaryBox.containsCoordinate( node.mOrigin ) ) {
+    // std::cout << "not contained: " << node.toString() << std::endl;
     return false;
   }
 
   // if space available here, add it
-  if ( this->nodes->size() < this->NODE_CAPACITY ) {
-    this->nodes->push_back( _node );
+  if ( this->mNodes.size() < this->NODE_CAPACITY ) {
+    this->mNodes.push_back( node );
+    // std::cout << "added node: " << node.toString() << std::endl;
     return true;
   }
 
   // create child quads
-  if ( this->northWest == NULL ) this->subdivide();
+  if ( this->mNorthWest == NULL ) this->subdivide();
 
-  // otherwise subdivide and add to first available node
-  if ( this->northWest->insert( _node ) ) return true;
-  if ( this->northEast->insert( _node ) ) return true;
-  if ( this->southWest->insert( _node ) ) return true;
-  if ( this->southEast->insert( _node ) ) return true;
+  // otherwise subdivide and add to first available quad
+  if ( this->mNorthWest->insert( node ) ) return true;
+  if ( this->mNorthEast->insert( node ) ) return true;
+  if ( this->mSouthWest->insert( node ) ) return true;
+  if ( this->mSouthEast->insert( node ) ) return true;
 
   return false;
 }
 
-template<typename T>
-QuadTree<T>::~QuadTree() {
-
-  // delete this->northWest;
-  // delete this->northEast;
-  // delete this->southWest;
-  // delete this->southEast;
-
-}
-
-template<typename T>
-void QuadTree<T>::subdivide()
+void QuadTree::subdivide()
 {
 
-  double newHalfSize = this->boundaryBox->halfSize / 2;
+  std::cout << "subd start" << std::endl;
 
-  Coordinate* nwCenter = new Coordinate( this->boundaryBox->center->x - newHalfSize, this->boundaryBox->center->y + newHalfSize );
-  Coordinate* neCenter = new Coordinate( this->boundaryBox->center->x + newHalfSize, this->boundaryBox->center->y + newHalfSize );
-  Coordinate* swCenter = new Coordinate( this->boundaryBox->center->x - newHalfSize, this->boundaryBox->center->y - newHalfSize );
-  Coordinate* seCenter = new Coordinate( this->boundaryBox->center->x + newHalfSize, this->boundaryBox->center->y - newHalfSize );
+  double newHalfSize = this->mBoundaryBox.mHalfSize / 2;
 
-  BoundaryBox* bbNw = new BoundaryBox( nwCenter, newHalfSize );
-  BoundaryBox* bbNe = new BoundaryBox( neCenter, newHalfSize );
-  BoundaryBox* bbSw = new BoundaryBox( swCenter, newHalfSize );
-  BoundaryBox* bbSe = new BoundaryBox( seCenter, newHalfSize );
+  Coordinate nwCenter = Coordinate( this->mBoundaryBox.mOrigin.mX - newHalfSize, this->mBoundaryBox.mOrigin.mY + newHalfSize );
+  Coordinate neCenter = Coordinate( this->mBoundaryBox.mOrigin.mX + newHalfSize, this->mBoundaryBox.mOrigin.mY + newHalfSize );
+  Coordinate swCenter = Coordinate( this->mBoundaryBox.mOrigin.mX - newHalfSize, this->mBoundaryBox.mOrigin.mY - newHalfSize );
+  Coordinate seCenter = Coordinate( this->mBoundaryBox.mOrigin.mX + newHalfSize, this->mBoundaryBox.mOrigin.mY - newHalfSize );
 
-  this->northWest = new QuadTree<T>( bbNw );
-  this->northEast = new QuadTree<T>( bbNe );
-  this->southWest = new QuadTree<T>( bbSw );
-  this->southEast = new QuadTree<T>( bbSe );
+  BoundaryBox bbNw = BoundaryBox( nwCenter, newHalfSize );
+  BoundaryBox bbNe = BoundaryBox( neCenter, newHalfSize );
+  BoundaryBox bbSw = BoundaryBox( swCenter, newHalfSize );
+  BoundaryBox bbSe = BoundaryBox( seCenter, newHalfSize );
+
+  this->mNorthWest = new QuadTree( bbNw );
+  this->mNorthEast = new QuadTree( bbNe );
+  this->mSouthWest = new QuadTree( bbSw );
+  this->mSouthEast = new QuadTree( bbSe );
 
   // move nodes from this quad to child quads
 
-  for ( unsigned int i = 0; i < this->nodes->size(); i++ ) {
+  for ( unsigned int i = 0; i < this->mNodes.size(); i++ ) {
 
-    Node<T>* node = this->nodes->at( i );
+    Node node = this->mNodes.at( i );
 
-    bool inserted =   this->northWest->insert( node ) ||
-                      this->northEast->insert( node ) ||
-                      this->southWest->insert( node ) ||
-                      this->southEast->insert( node )
-                      ;
-
-    assert( inserted );
+    if ( this->mNorthWest->insert( node ) ) std::cout << "inserted " << &node << " into northWest" << std::endl;
+    else if ( this->mNorthEast->insert( node ) ) std::cout << "inserted " << &node << " into northEast" << std::endl;
+    else if ( this->mSouthWest->insert( node ) ) std::cout << "inserted " << &node << " into mSouthWest" << std::endl;
+    else if ( this->mSouthEast->insert( node ) ) std::cout << "inserted " << &node << " into mSouthEast" << std::endl;
 
   }
 
-  this->nodes->clear();
+  this->mNodes.clear();
 
-  assert( this->nodes->empty() );
+  assert( this->mNodes.empty() );
+
+  std::cout << "subd end" << std::endl;
 
 }
 
-template<typename T>
-std::vector< Node<T>* >* QuadTree<T>::queryRange( BoundaryBox* _boundaryBox )
+std::vector<Node> QuadTree::queryRange( BoundaryBox boundaryBox )
 {
-  
-  std::vector< Node<T>* >* results = new std::vector< Node<T>* >();
 
-  if ( !this->boundaryBox->intersectsBoundaryBox( _boundaryBox ) ) return results;
+  std::vector<Node> results = std::vector<Node>();
 
-  for ( unsigned int i = 0; i < this->nodes->size(); i++ ) {
+  if ( !this->mBoundaryBox.intersectsBoundaryBox( boundaryBox ) ) return results;
 
-    Node<T> *node = this->nodes->at( i );
+  for ( unsigned int i = 0; i < this->mNodes.size(); i++ ) {
 
-    if ( _boundaryBox->containsCoordinate( node->point ) ) {
-      results->push_back( node );
+    Node node = this->mNodes.at( i );
+
+    if ( boundaryBox.containsCoordinate( node.mOrigin ) ) {
+      results.push_back( node );
     }
 
   }
@@ -178,4 +113,8 @@ std::vector< Node<T>* >* QuadTree<T>::queryRange( BoundaryBox* _boundaryBox )
   return results;
 }
 
-
+// Printable
+std::string QuadTree::toString()
+{
+  return std::string( "QuadTree(mBoundaryBox:" + this->mBoundaryBox.toString() + ")" );
+}

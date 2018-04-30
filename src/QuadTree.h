@@ -1,49 +1,14 @@
 #ifndef QUADTREE_H
 #define QUADTREE_H
 
+#include <string>
 #include <vector>
 
-class Coordinate
-{
+#include "./Printable.h"
+#include "./BoundaryBox.h"
+#include "./Node.h"
 
-  public:
-
-    double x;
-    double y;
-
-    Coordinate( double _x, double _y );
-
-};
-
-template<typename T>
-class Node
-{
-
-  public:
-
-    Coordinate* point;
-    T* data;
-
-    Node( Coordinate* _point, T* _data );
-
-};
-
-class BoundaryBox
-{
-
-  public:
-
-    Coordinate* center;
-    double halfSize;
-
-    BoundaryBox( Coordinate* _center, double _halfSize );
-    bool containsCoordinate( Coordinate* _point );
-    bool intersectsBoundaryBox( BoundaryBox* _boundaryBox );
-
-};
-
-template<typename T>
-class QuadTree
+class QuadTree : Printable
 {
 
   private:
@@ -52,24 +17,27 @@ class QuadTree
 
   public:
 
-    BoundaryBox* boundaryBox;
-    std::vector< Node<T>* >* nodes;
+    BoundaryBox mBoundaryBox;
+    std::vector<Node> mNodes;
 
-    QuadTree<T>* northWest;
-    QuadTree<T>* northEast;
-    QuadTree<T>* southWest;
-    QuadTree<T>* southEast;
+    QuadTree* mNorthWest;
+    QuadTree* mNorthEast;
+    QuadTree* mSouthWest;
+    QuadTree* mSouthEast;
 
     // nw---ne
     // |     |
     // |     |
     // sw---se
 
-    QuadTree( BoundaryBox* _boundaryBox );
-    ~QuadTree();
-    bool insert( Node<T>* _node );
+    QuadTree( BoundaryBox boundaryBox );
+    // ~QuadTree();
+    bool insert( Node node );
     void subdivide(); // divide into 4 children
-    std::vector< Node<T>* >* queryRange( BoundaryBox* _boundaryBox );
+    std::vector<Node> queryRange( BoundaryBox boundaryBox );
+
+    // Printable
+    std::string toString();
 
 };
 
