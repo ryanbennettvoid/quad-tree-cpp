@@ -17,6 +17,10 @@ class BoundaryBox : Printable
     BoundaryBox( Coordinate origin, double halfSize );
     bool containsCoordinate( Coordinate& origin ) const;
     bool intersectsBoundaryBox( BoundaryBox& boundaryBox ) const;
+    double getLeft() const;
+    double getRight() const;
+    double getTop() const;
+    double getBottom() const;
 
     // Printable
     std::string toString();

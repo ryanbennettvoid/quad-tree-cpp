@@ -11,7 +11,7 @@
 QuadTree::QuadTree( BoundaryBox boundaryBox )
 : mBoundaryBox(boundaryBox), mNorthWest(NULL), mNorthEast(NULL), mSouthWest(NULL), mSouthEast(NULL)
 {
-  // this->mNodes = std::vector<Node>();
+  std::cout << "QuadTree created: " << this->mBoundaryBox.toString() << std::endl;
 }
 
 // QuadTree::~QuadTree()
@@ -72,23 +72,6 @@ void QuadTree::subdivide()
   this->mSouthWest = new QuadTree( bbSw );
   this->mSouthEast = new QuadTree( bbSe );
 
-  // move nodes from this quad to child quads
-
-  for ( unsigned int i = 0; i < this->mNodes.size(); i++ ) {
-
-    Node node = this->mNodes.at( i );
-
-    if ( this->mNorthWest->insert( node ) ) std::cout << "inserted " << &node << " into northWest" << std::endl;
-    else if ( this->mNorthEast->insert( node ) ) std::cout << "inserted " << &node << " into northEast" << std::endl;
-    else if ( this->mSouthWest->insert( node ) ) std::cout << "inserted " << &node << " into mSouthWest" << std::endl;
-    else if ( this->mSouthEast->insert( node ) ) std::cout << "inserted " << &node << " into mSouthEast" << std::endl;
-
-  }
-
-  this->mNodes.clear();
-
-  assert( this->mNodes.empty() );
-
   std::cout << "subd end" << std::endl;
 
 }
@@ -100,14 +83,30 @@ std::vector<Node> QuadTree::queryRange( BoundaryBox boundaryBox )
 
   if ( !this->mBoundaryBox.intersectsBoundaryBox( boundaryBox ) ) return results;
 
+  // add from this quad
   for ( unsigned int i = 0; i < this->mNodes.size(); i++ ) {
-
     Node node = this->mNodes.at( i );
-
     if ( boundaryBox.containsCoordinate( node.mOrigin ) ) {
       results.push_back( node );
     }
+  }
 
+  // add from child quads
+  if ( this->mNorthWest != NULL ) {
+    std::vector<Node> queryNodes = this->mNorthWest->queryRange( boundaryBox );
+    results.insert( results.end(), queryNodes.begin(), queryNodes.end() );
+  }
+  if ( this->mNorthEast != NULL ) {
+    std::vector<Node> queryNodes = this->mNorthEast->queryRange( boundaryBox );
+    results.insert( results.end(), queryNodes.begin(), queryNodes.end() );
+  }
+  if ( this->mSouthWest != NULL ) {
+    std::vector<Node> queryNodes = this->mSouthWest->queryRange( boundaryBox );
+    results.insert( results.end(), queryNodes.begin(), queryNodes.end() );
+  }
+  if ( this->mSouthEast != NULL ) {
+    std::vector<Node> queryNodes = this->mSouthEast->queryRange( boundaryBox );
+    results.insert( results.end(), queryNodes.begin(), queryNodes.end() );
   }
 
   return results;

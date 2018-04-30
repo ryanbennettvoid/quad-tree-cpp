@@ -12,18 +12,15 @@ BoundaryBox::BoundaryBox( Coordinate origin, double halfSize )
 bool BoundaryBox::containsCoordinate( Coordinate& coordinate ) const
 {
 
-  double left = this->mOrigin.mX - this->mHalfSize;
-  double right = this->mOrigin.mX + this->mHalfSize;
-  double top = this->mOrigin.mY + this->mHalfSize;
-  double bottom = this->mOrigin.mY - this->mHalfSize;
+  double left     = this->mOrigin.mX - this->mHalfSize;
+  double right    = this->mOrigin.mX + this->mHalfSize;
+  double top      = this->mOrigin.mY + this->mHalfSize;
+  double bottom   = this->mOrigin.mY - this->mHalfSize;
 
   double x = coordinate.mX;
   double y = coordinate.mY;
 
-  if (
-    left < x && x < right &&
-    bottom < y && y < top
-  ) {
+  if ( left < x && x < right && bottom < y && y < top ) {
     return true;
   }
 
@@ -34,23 +31,39 @@ bool BoundaryBox::containsCoordinate( Coordinate& coordinate ) const
 bool BoundaryBox::intersectsBoundaryBox( BoundaryBox& boundaryBox ) const
 {
 
-  double leftA = this->mOrigin.mX - this->mHalfSize;
-  double rightA = this->mOrigin.mX + this->mHalfSize;
-  double topA = this->mOrigin.mY + this->mHalfSize;
-  double bottomA = this->mOrigin.mY - this->mHalfSize;
+  double leftA    = this->getLeft();
+  double rightA   = this->getRight();
+  double topA     = this->getTop();
+  double bottomA  = this->getBottom();
 
-  double leftB = boundaryBox.mOrigin.mX - boundaryBox.mHalfSize;
-  double rightB = boundaryBox.mOrigin.mX + boundaryBox.mHalfSize;
-  double topB = boundaryBox.mOrigin.mY + boundaryBox.mHalfSize;
-  double bottomB = boundaryBox.mOrigin.mY - boundaryBox.mHalfSize;
+  double leftB    = boundaryBox.getLeft();
+  double rightB   = boundaryBox.getRight();
+  double topB     = boundaryBox.getTop();
+  double bottomB  = boundaryBox.getBottom();
 
-  return !(
-    leftA > rightB ||
-    rightA < leftB ||
-    topA < bottomB ||
-    bottomA > topB
-  );
+  return !( leftA > rightB || rightA < leftB || topA < bottomB || bottomA > topB );
 }
+
+double BoundaryBox::getLeft() const
+{
+  return this->mOrigin.mX - this->mHalfSize;
+}
+
+double BoundaryBox::getRight() const
+{
+  return this->mOrigin.mX + this->mHalfSize;
+}
+
+double BoundaryBox::getTop() const
+{
+  return this->mOrigin.mY + this->mHalfSize;
+}
+
+double BoundaryBox::getBottom() const
+{
+  return this->mOrigin.mY - this->mHalfSize;
+}
+
 
 
 // Printable

@@ -7,24 +7,27 @@
 #include "./Node.h"
 #include "./Data.h"
 #include "./QuadTree.h"
+#include "./Helpers.h"
 
-const int WORLD_SIZE = 1000;
+const int HALF_WORLD_SIZE = 1000;
 
 int main() {
 
-  Coordinate worldCenter = Coordinate( 5, 3 );
+  Coordinate worldCenter = Coordinate( 0, 0 );
   std::cout << "created worldCenter: " << worldCenter.toString() << std::endl;
 
-  BoundaryBox worldBounds = BoundaryBox( worldCenter, WORLD_SIZE/2 );
+  BoundaryBox worldBounds = BoundaryBox( worldCenter, HALF_WORLD_SIZE );
   std::cout << "created worldBounds: " << worldBounds.toString() << std::endl;
   
   QuadTree qt = QuadTree( worldBounds );
   std::cout << "create qt: " << qt.toString() << std::endl;
 
-  for ( int i = 0; i < 15; i++ ) {
+  int rangeNum = HALF_WORLD_SIZE * 0.9999;
 
-    double randX = ( double )( rand() % WORLD_SIZE ) * 0.9;
-    double randY = ( double )( rand() % WORLD_SIZE ) * 0.9;
+  for ( int i = 0; i < 50; i++ ) {
+
+    double randX = Helpers::generateRandomNumberInRange( -rangeNum, rangeNum );
+    double randY = Helpers::generateRandomNumberInRange( -rangeNum, rangeNum );
     
     Coordinate nodeOrigin = Coordinate( randX, randY );
     Data nodeData = Data();
