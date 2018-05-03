@@ -6,75 +6,84 @@ const Log = require( 'log' ), log = new Log();
 const express = require( 'express' ), app = express();
 const morgan = require( 'morgan' );
 const bodyParser = require( 'body-parser' );
-const rpc = require( 'dead-simple-rpc' );
+const Client = require( './lib/client.js' );
 const importer = require( './importer.js' );
 
-const client = rpc.Client( {
+const client = Client( {
   host: 'localhost',
   port: 9999
 } );
 
-importer.getItems()
-.then( ( items ) => {
+app.use( morgan( 'tiny' ) );
+app.use( bodyParser.json( { limit: '50mb'} ) );
+app.use( bodyParser.urlencoded( { limit: '50mb', extended: true } ) );
+app.use( express.static( './public' ) );
 
-  log.debug( `inserting ${items.length} items` );
+app.get( '/region', ( req, res ) => {
 
-  return Promise.map( items, ( item ) => {
+  const { origin, halfSize } = req.query;
 
-    const { lat, lng } = item;
+  const [ lng, lat ] = origin.split( ',' );
 
-    return client.evoke( 'insert', {
-      originX: lng,
-      originY: lat
-    } );
+  const q = {
+    origin: {
+      x: parseFloat( lng ),
+      y: parseFloat( lat )
+    },
+    halfSize: parseFloat( halfSize )
+  };
 
-  }, { concurrency: 100 } )
+  client.evoke( 'queryRange', q )
+  .then( ( response ) => {
+    res.json( response );
+  } )
+  .catch( ( err ) => {
+    log.error( 'err: ', err );
+    res.status( 500 ).json( {} );
+  } )
   ;
 
-} )
-.then( ( items ) => {
-  return startServer();
 } );
 
-const startServer = () => {
+app.listen( 8080, () => {
 
-  app.use( morgan( 'tiny' ) );
-  app.use( bodyParser.json( { limit: '50mb'} ) );
-  app.use( bodyParser.urlencoded( { limit: '50mb', extended: true } ) );
+  console.log( `listening on port ${PORT}...` );
 
-  app.get( '/', ( req, res ) => {
-    res.json( { msg: 'ok' } );
-  } );
+  client.evoke( 'queryRange', {
+    origin: { x: 0, y: 0 },
+    halfSize: 180
+  } )
+  .then( ( response ) => {
+    const { items } = response || {};
+    if ( !items || items.length === 0 ) return loadItems();
+  } )
+  .catch( ( err ) => {
+    log.error( 'err: ', err );
+  } )
+  ;
 
-  app.get( '/region', ( req, res ) => {
+} );
 
-    const { origin, halfSize } = req.query;
+const loadItems = () => {
 
-    const [ lat, lng ] = origin.split( ',' );
+  return importer.getItems()
+  .then( ( items ) => {
 
-    const q = {
-      origin: {
-        x: parseFloat( lng ),
-        y: parseFloat( lat )
-      },
-      halfSize: parseFloat( halfSize )
-    };
+    log.debug( `inserting ${items.length} items` );
 
-    log.debug( q );
+    return Promise.map( items, ( item ) => {
 
-    client.evoke( 'queryRange', q )
-    .then( ( response ) => {
-      log.debug( 'response: ', response );
-      res.json( response );
-    } )
-    .catch( ( err ) => {
-      log.error( 'err: ', err );
-      res.status( 500 ).json( {} );
-    } )
+      const { lat, lng } = item;
+
+      return client.evoke( 'insert', {
+        originX: lng,
+        originY: lat
+      } );
+
+    }, { concurrency: 100 } )
     ;
 
-  } );
-
-  app.listen( 8080, () => console.log( `listening on port ${PORT}...` ) );
+  } )
+  ;
 
 };

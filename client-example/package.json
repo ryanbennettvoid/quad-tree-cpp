@@ -12,7 +12,6 @@
   "dependencies": {
     "bluebird": "^3.5.1",
     "body-parser": "^1.18.2",
-    "dead-simple-rpc": "^2.0.0",
     "express": "^4.16.3",
     "log": "^1.4.0",
     "morgan": "^1.9.0"

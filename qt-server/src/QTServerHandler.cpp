@@ -60,8 +60,6 @@ std::string QTServerHandler::onRequest( std::string functionName, picojson::valu
 
     std::vector<Node> nodeResults = this->queryRange( bb );
 
-    std::cout << "queryRange results: " << nodeResults.size() << std::endl;
-
     picojson::array jsonResults = picojson::array();
 
     for ( unsigned int i = 0; i < nodeResults.size(); i++ ) {

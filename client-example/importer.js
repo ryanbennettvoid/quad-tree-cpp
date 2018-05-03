@@ -14,7 +14,7 @@ importer.getItems = () => {
     return items.split( /\r\n|\n/ )
     .filter( ( o ) => !!o )
     .map( ( line ) => {
-      const [ lat, lng ] = ( line||'' ).split( ',' );
+      const [ lng, lat ] = ( line||'' ).split( ',' );
       return { lat: parseFloat( lat ), lng: parseFloat( lng ) };
     } )
     .filter( ( item ) => {
