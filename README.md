@@ -23,4 +23,7 @@ make
 Node.js Client Example:
 ```
 cd ./client-example
+node .
 ```
+
+In browser, go to `http://localhost:8080`
