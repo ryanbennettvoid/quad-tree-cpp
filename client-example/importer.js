@@ -14,8 +14,17 @@ importer.getItems = () => {
     return items.split( /\r\n|\n/ )
     .filter( ( o ) => !!o )
     .map( ( line ) => {
-      const [ lng, lat ] = ( line||'' ).split( ',' );
-      return { lat: parseFloat( lat ), lng: parseFloat( lng ) };
+      const [ lng, lat, name, country, address, phone_number ] = ( line||'' ).split( ',' );
+      return {
+        lat: parseFloat( lat ),
+        lng: parseFloat( lng ),
+        data: {
+          name,
+          country,
+          address,
+          phone_number
+        }
+      };
     } )
     .filter( ( item ) => {
       return typeof item.lat === 'number' && typeof item.lng === 'number';

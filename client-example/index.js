@@ -73,11 +73,12 @@ const loadItems = () => {
 
     return Promise.map( items, ( item ) => {
 
-      const { lat, lng } = item;
+      const { lat, lng, data } = item;
 
       return client.evoke( 'insert', {
         originX: lng,
-        originY: lat
+        originY: lat,
+        data
       } );
 
     }, { concurrency: 100 } )

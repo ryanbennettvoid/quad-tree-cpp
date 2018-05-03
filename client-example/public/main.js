@@ -1,65 +1,68 @@
+( function() {
 
-var map = L.map( 'map', {
-    center: [ 34.0933, -118.340 ],
-    zoom: 13
-} );
 
-L.tileLayer( 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-    maxZoom: 18,
-    id: 'mapbox.streets',
-    accessToken: 'pk.eyJ1IjoicnlhbmJlZXpsZSIsImEiOiJ4VkRUVjBjIn0.craTzHuB402M6UDI3pLYCg'
-} ).addTo( map );
+  var map = L.map( 'map', {
+      center: [ 34.0933, -118.340 ],
+      zoom: 13
+  } );
 
-var markers = [];
+  L.tileLayer( 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+      maxZoom: 18,
+      id: 'mapbox.streets',
+      accessToken: 'pk.eyJ1IjoicnlhbmJlZXpsZSIsImEiOiJ4VkRUVjBjIn0.craTzHuB402M6UDI3pLYCg'
+  } ).addTo( map );
 
-var updateMarkers = function() {
+  var markers = [];
 
-  var bounds = map.getBounds();
-  var center = map.getCenter();
+  var updateMarkers = function() {
 
-  var y = center.lat;
-  var x = center.lng;
-  var hSize = bounds.getNorthEast().lat - bounds.getSouthWest().lat;
-  var vSize = bounds.getNorthEast().lng - bounds.getSouthWest().lng;
-  var halfSize = Math.max( hSize, vSize ) / 2;
+    var bounds = map.getBounds();
+    var center = map.getCenter();
 
-  var url = 'http://localhost:8080/region?origin=' + x + ',' + y + '&halfSize=' + halfSize;
+    var y = center.lat;
+    var x = center.lng;
+    var hSize = bounds.getNorthEast().lat - bounds.getSouthWest().lat;
+    var vSize = bounds.getNorthEast().lng - bounds.getSouthWest().lng;
+    var halfSize = Math.max( hSize, vSize ) / 2;
 
-  fetch( url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  } )
-  .then( function( res ) {
-    return res.json();
-  } )
-  .then( function( res ) {
+    var url = 'http://localhost:8080/region?origin=' + x + ',' + y + '&halfSize=' + halfSize;
 
-    console.log( 'res: ', res );
+    fetch( url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    } )
+    .then( function( res ) {
+      return res.json();
+    } )
+    .then( function( res ) {
 
-    markers.forEach( function( m ) {
-      m.remove();
-    } );
+      console.log( 'res: ', res );
 
-    ( res.items || [] ).forEach( function( item ) {
 
-      var m = L.marker( [ item.y, item.x ] );
-      markers.push( m );
-      m.addTo( map );
+      while ( markers.length > 0 ) {
+        markers.pop().remove();
+      }
 
-    } );
+      res.items.forEach( function( item ) {
+        var m = L.marker( [ item.y, item.x ] );
+        markers.push( m );
+        m.addTo( map );
+      } );
 
-  } )
-  .catch( function( err ) {
-    console.log( 'err: ', err );
-  } )
-  ;
+    } )
+    .catch( function( err ) {
+      console.log( 'err: ', err );
+    } )
+    ;
 
-};
+  };
 
-updateMarkers();
+  updateMarkers();
 
-map.on( 'dragend', updateMarkers );
-map.on( 'zoom', updateMarkers );
+  map.on( 'dragend', updateMarkers );
+  map.on( 'zoom', updateMarkers );
+
+} )();

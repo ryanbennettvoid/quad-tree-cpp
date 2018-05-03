@@ -28,14 +28,16 @@ std::string QTServerHandler::onRequest( std::string functionName, picojson::valu
 
   if ( functionName == "insert" ) {
 
-    if ( !( args.get( "originX" ).is<double>() && args.get( "originY" ).is<double>() ) ) {
+    if ( !( args.get( "originX" ).is<double>() && args.get( "originY" ).is<double>() && args.get( "data" ).is<picojson::object>() ) ) {
       std::cout << "invalid args for insert: " << args.serialize() << std::endl;
       return "{}";
     }
 
     double originX = args.get( "originX" ).get<double>();
     double originY = args.get( "originY" ).get<double>();
-    Node node = Node( Coordinate( originX, originY ), Data() );
+    picojson::object data = args.get( "data" ).get<picojson::object>();
+
+    Node node = Node( Coordinate( originX, originY ), Data( data ) );
     response[ "success" ] = picojson::value( this->insert( node ) );
 
   } else if ( functionName == "queryRange" ) {
