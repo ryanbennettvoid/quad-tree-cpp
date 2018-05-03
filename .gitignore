@@ -10,3 +10,4 @@ CTestTestfile.cmake
 quadtree
 *.bmp
 .DS_Store
+node_modules

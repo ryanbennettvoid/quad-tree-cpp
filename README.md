@@ -3,8 +3,6 @@
 
 A Quad Tree data structure implemented in C++
 
-![demo](/screenshot.jpg?raw=true)
-
 ### Why?
 - To experiment with high performance 2D point queries for geolocation software
 - To extend my knowlege of Java to C++
