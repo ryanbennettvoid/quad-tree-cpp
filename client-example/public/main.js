@@ -22,7 +22,7 @@ var updateMarkers = function() {
   var x = center.lng;
   var hSize = bounds.getNorthEast().lat - bounds.getSouthWest().lat;
   var vSize = bounds.getNorthEast().lng - bounds.getSouthWest().lng;
-  var halfSize = Math.max( hSize, vSize );
+  var halfSize = Math.max( hSize, vSize ) / 2;
 
   var url = 'http://localhost:8080/region?origin=' + x + ',' + y + '&halfSize=' + halfSize;
 
