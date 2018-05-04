@@ -7,7 +7,7 @@ cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
-build/quadtree
+build/*
 *.bmp
 .DS_Store
 node_modules

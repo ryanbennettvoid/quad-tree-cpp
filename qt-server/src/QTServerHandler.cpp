@@ -26,6 +26,8 @@ std::string QTServerHandler::onRequest( std::string functionName, picojson::valu
 
   picojson::object response = picojson::object();
 
+  std::cout << functionName << " -> " << picojson::value( args ).serialize() << std::endl;
+
   if ( functionName == "insert" ) {
 
     if ( !( args.get( "originX" ).is<double>() && args.get( "originY" ).is<double>() && args.get( "data" ).is<picojson::object>() ) ) {
@@ -65,7 +67,7 @@ std::string QTServerHandler::onRequest( std::string functionName, picojson::valu
     picojson::array jsonResults = picojson::array();
 
     for ( unsigned int i = 0; i < nodeResults.size(); i++ ) {
-      Node node = nodeResults[ i ];
+      Node& node = nodeResults[ i ];
       jsonResults.push_back( picojson::value( node.toJSON() ) );
     }
 
