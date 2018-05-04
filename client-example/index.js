@@ -71,6 +71,8 @@ const loadItems = () => {
 
     log.debug( `inserting ${items.length} items` );
 
+    const start = Date.now();
+
     return Promise.map( items, ( item ) => {
 
       const { lat, lng, data } = item;
@@ -82,6 +84,11 @@ const loadItems = () => {
       } );
 
     }, { concurrency: 100 } )
+    .then( () => {
+      const elapsed = ( Date.now() - start ) / 1000;
+      const insertsPerSec = Math.floor( items.length / elapsed );
+      log.debug( `${insertsPerSec} inserts/sec` );
+    } )
     ;
 
   } )
